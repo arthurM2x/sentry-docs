@@ -536,7 +536,7 @@ function processItem(item, transaction) {
 
 #### Retrieving a Transaction
 
-In cases where you want to attach Spans to an already ongoing Transaction you can use `Sentry.getCurrentHub().getScope().getTransaction()`. This function will return a `Transaction` in case there is a running Transaction otherwise it returns `undefined`. If you are using our Tracing integration by default we attach the Transaction to the Scope. So you could do something like this:
+In cases where you want to attach a span to already ongoing transaction, you can use `Sentry.getCurrentHub().getScope().getTransaction()` call. This function will return a `Transaction` in case there is a running transaction or `undefined` otherwise. If you are using our Tracing integration, we attach the transaction to the scope by default, so you could do something like this:
 
 ```javascript
 function myJsFunction() {
@@ -640,7 +640,7 @@ app.use(function processItems(req, res, next) {
 
 #### Retrieving a Transaction
 
-In cases where you want to attach Spans to an already ongoing Transaction you can use `Sentry.getCurrentHub().getScope().getTransaction()`. This function will return a `Transaction` in case there is a running Transaction otherwise it returns `undefined`. If you are using our Express integration by default we attach the Transaction to the Scope. So you could do something like this:
+In cases where you want to attach a span to already ongoing transaction, you can use `Sentry.getCurrentHub().getScope().getTransaction()` call. This function will return a `Transaction` in case there is a running transaction or `undefined` otherwise. If you are using our Tracing integration, we attach the transaction to the scope by default, so you could do something like this:
 
 ```javascript
 app.get("/success", function successHandler(req, res) {

@@ -380,7 +380,7 @@ import sentry_sdk
 while True:
   item = get_from_queue()
 
-  with sentry_sdk.start_span(op="task", transaction=item.get_transaction()):
+  with sentry_sdk.startTransaction(op="task", name=item.get_transaction()):
       # process_item may create more spans internally (see next examples)
       process_item(item)
 ```
@@ -402,6 +402,10 @@ def process_item(item):
       span.set_tag("http.status_code", response.status_code)
       span.set_data("http.foobarsessionid", get_foobar_sessionid())
 ```
+
+#### Retrieving a Transaction
+
+TODO
 
 ### JavaScript
 
@@ -530,6 +534,24 @@ function processItem(item, transaction) {
 }
 ```
 
+#### Retrieving a Transaction
+
+In cases where you want to attach Spans to an already ongoing Transaction you can use `Sentry.getCurrentHub().getScope().getTransaction()`. This function will return a `Transaction` in case there is a running Transaction otherwise it returns `undefined`. If you are using our Tracing integration by default we attach the Transaction to the Scope. So you could do something like this:
+
+```javascript
+function myJsFunction() {
+  const transaction = Sentry.getCurrentHub().getScope().getTransaction();  
+  if (transaction) {
+    let span = transaction.startChild({
+      op: "encode",
+      description: "parseAvatarImages"
+    });
+    // Do something
+    span.finish();
+  }
+}
+```
+
 ### Node.js
 
 To access our tracing features, you will need to install our Tracing integration:
@@ -616,6 +638,25 @@ app.use(function processItems(req, res, next) {
 });
 ```
 
+#### Retrieving a Transaction
+
+In cases where you want to attach Spans to an already ongoing Transaction you can use `Sentry.getCurrentHub().getScope().getTransaction()`. This function will return a `Transaction` in case there is a running Transaction otherwise it returns `undefined`. If you are using our Express integration by default we attach the Transaction to the Scope. So you could do something like this:
+
+```javascript
+app.get("/success", function successHandler(req, res) {
+  const transaction = Sentry.getCurrentHub().getScope().getTransaction();
+  if (transaction) {
+    let span = transaction.startChild({
+      op: "encode",
+      description: "parseAvatarImages"
+    });
+    // Do something
+    span.finish();
+  }
+  res.status(200).end();
+});
+```
+
 ### Vue.js
 
 The Vue Tracing Integration allows you to track rendering performance during an initial application load.
@@ -650,7 +691,7 @@ Sentry.init({
       tracing: true
     })
   ],
-  tracesSampleRate: 1
+  tracesSampleRate: 0.25
 });
 ```
 

@@ -1,0 +1,31 @@
+const express = require('express');
+const {createProxyMiddleware} = require('http-proxy-middleware');
+
+const PORT = parseInt(process.env.PORT, 10) || 3000;
+
+const app = express();
+
+const routes = [
+  {
+    routes: ["/assets", "/platforms", "/clients", "/error-reporting", "/enriching-error-data", "/workflow", "/data-management", "/accounts", "/cli", "/api", "/guides", "/support"],
+    address: "http://localhost:9001"
+  },
+  {
+    routes: ["/"],
+    address: "http://localhost:8000"
+  },
+];
+
+for (route of routes) {
+  app.use(
+    route.routes,
+    createProxyMiddleware({
+      target: route.address
+    })
+  );
+}
+ 
+app.listen(PORT, () => {
+    console.log(`Proxy running at http://localhost:${PORT}`);
+});
+ 

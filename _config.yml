@@ -72,8 +72,6 @@ defaults:
 
 assets:
   source_maps: false # Prefer webpack source maps
-  sources:
-    - ../node_modules
   plugins:
     css:
       autoprefixer:
